@@ -1,11 +1,11 @@
-#include "telegraphwindow.h"
+#include "telegraph.h"
 #include <QApplication>
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    TelegraphWindow w;
-    w.show();
+    Telegraph telegrapgh;
+    telegrapgh.start();
 
     return a.exec();
 }

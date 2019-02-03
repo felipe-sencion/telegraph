@@ -15,6 +15,8 @@ private:
     LoginWindow *loginWindow;
     TelegraphWindow *telegraphWindow;
 
+    size_t findUser(QString name);
+
 public:
     explicit Telegraph(QObject *parent = 0);
     void start();

@@ -1,6 +1,15 @@
 #include "telegraph.h"
 #include <QMessageBox>
 
+size_t Telegraph::findUser(QString name)
+{
+    size_t idx = 0;
+    for (; idx < users.size(); ++idx)
+        if (users[idx].getUserName() == name)
+            return idx;
+    return idx;
+}
+
 Telegraph::Telegraph(QObject *parent) : QObject(parent)
 {
     loginWindow = new LoginWindow();
@@ -36,11 +45,21 @@ void Telegraph::validate(QString name, QString password)
 
 void Telegraph::newUser(QString name, QString password, QString phone)
 {
-    User u(name, phone, password);
-    users.push_back(u);
+    if (findUser(name) < users.size())
+    {
+        QMessageBox message;
+        message.setWindowTitle("User already exists");
+        message.setText("The username is already being used");
+        message.exec();
+    }
+    else
+    {
+        User u(name, phone, password);
+        users.push_back(u);
 
-    QMessageBox message;
-    message.setWindowTitle("New User");
-    message.setText("New user created");
-    message.exec();
+        QMessageBox message;
+        message.setWindowTitle("New User");
+        message.setText("New user created");
+        message.exec();
+    }
 }

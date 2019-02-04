@@ -5,6 +5,10 @@
 #include "loginwindow.h"
 #include "telegraphwindow.h"
 #include <QObject>
+#include <QFile>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonArray>
 
 class Telegraph : public QObject
 {
@@ -14,11 +18,16 @@ private:
     std::vector<User> users;
     LoginWindow *loginWindow;
     TelegraphWindow *telegraphWindow;
+    QFile db;
+    QJsonArray jsonArray;
 
     size_t findUser(QString name);
+    void saveDB();
+    void loadDB();
 
 public:
     explicit Telegraph(QObject *parent = 0);
+    ~Telegraph();
     void start();
 
 signals:

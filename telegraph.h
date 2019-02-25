@@ -24,6 +24,8 @@ private:
     size_t findUser(QString name);
     void saveDB();
     void loadDB();
+    bool findContact(int uIndex, QString name);
+    //void populateContacts();
 
 public:
     explicit Telegraph(QObject *parent = 0);
@@ -37,6 +39,8 @@ public slots:
 private slots:
     void validate(QString name, QString password);
     void newUser(QString name, QString password, QString phone);
+    void search(int uIndex, QString pattern);
+    void addContact(int uIndex);
 };
 
 #endif // TELEGRAPH_H

@@ -49,12 +49,36 @@ void Telegraph::loadDB()
         {
             QJsonObject obj = jsonArray[i].toObject();
             User u(obj["userName"].toString(), obj["phone"].toString(), obj["password"].toString());
+            QJsonArray contactsArray = obj["contacts"].toArray();
+            vector<QString> contacts;
+            for(int i(0); i < contactsArray.size(); ++i)
+            {
+                contacts.push_back(contactsArray[i].toObject()["name"].toString());
+            }
+            u.setContacts(contacts);
 
             users.push_back(u);
         }
     }
     db.close();
 }
+
+bool Telegraph::findContact(int uIndex, QString name)
+{
+    vector<QString> contacts = users.at((uIndex)).getContacts();
+    for (int i(0); i < contacts.size(); ++i)
+    {
+        if (contacts.at(i) == name)
+            return true;
+    }
+    return false;
+}
+
+/*void Telegraph::populateContacts()
+{
+    for (unsigned int i(0); i < users.size(); ++i)
+        telegraphWindow->addContactWidget(users[i].getUserName());
+}*/
 
 Telegraph::Telegraph(QObject *parent) : QObject(parent)
 {
@@ -82,8 +106,11 @@ void Telegraph::validate(QString name, QString password)
     {
         if (users[i].getUserName() == name && users[i].getPassword() == password)
         {
-            telegraphWindow = new TelegraphWindow(&users[i]);
+            telegraphWindow = new TelegraphWindow(&users[i], i);
+            connect(telegraphWindow, SIGNAL(searching(int, QString)), this, SLOT(search(int, QString)));
+            connect(telegraphWindow, SIGNAL(updateContacts(int)), this, SLOT(addContact(int)));
             telegraphWindow->show();
+            //populateContacts();
             break;
         }
     }
@@ -113,6 +140,8 @@ void Telegraph::newUser(QString name, QString password, QString phone)
         jsonObject["userName"] = name;
         jsonObject["phone"] = phone;
         jsonObject["password"] = password;
+        QJsonArray contactsArray;
+        jsonObject["contacts"] = contactsArray;
         jsonArray.append(jsonObject);
 
         QMessageBox message;
@@ -120,4 +149,28 @@ void Telegraph::newUser(QString name, QString password, QString phone)
         message.setText("New user created");
         message.exec();
     }
+}
+
+void Telegraph::search(int uIndex, QString pattern)
+{
+    for (unsigned int i(0); i < users.size(); ++i)
+        if (users.at(i).getUserName().contains(pattern, Qt::CaseInsensitive))
+        {
+            if (findContact(uIndex, users.at(i).getUserName()))
+                telegraphWindow->addContactWidget(users[i].getUserName(), false);
+            else
+                telegraphWindow->addContactWidget(users[i].getUserName(), true);
+        }
+}
+
+void Telegraph::addContact(int uIndex)
+{
+    QJsonObject obj = jsonArray[uIndex].toObject();
+    QJsonArray contactsArray = obj["contacts"].toArray();
+    vector<QString> contacts = users[uIndex].getContacts();
+    QJsonObject contact;
+    contact["name"] = contacts.at(contacts.size()-1);
+    contactsArray.append(contact);
+    obj["contacts"] = contactsArray;
+    jsonArray[uIndex] = obj;
 }

@@ -30,9 +30,20 @@ void User::setPassword(const QString &value)
     password = value;
 }
 
+vector<QString> User::getContacts() const
+{
+    return contacts;
+}
+
+void User::setContacts(const vector<QString> &value)
+{
+    contacts = value;
+}
+
 User::User(QString name, QString ph, QString pass)
 {
     userName = name;
     phone = ph;
     password = pass;
+    contacts.clear();
 }

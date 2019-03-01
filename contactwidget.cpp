@@ -12,7 +12,7 @@ ContactWidget::ContactWidget(QString name, QWidget *parent) :
     QStringList sl = name.split('_');
 
     ui->setupUi(this);
-    ui->nameLabel->setText(sl[0]);
+    ui->nameLabel->setText(/*sl[0]*/name);
 
     QFont font("URW Chancery L", 20);
     QGraphicsDropShadowEffect *effect = new QGraphicsDropShadowEffect();

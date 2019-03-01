@@ -1,5 +1,6 @@
 #include "telegraphwindow.h"
 #include "ui_telegraphwindow.h"
+#include <QDebug>
 
 TelegraphWindow::TelegraphWindow(User *u, int uIndex, QWidget *parent) :
     QMainWindow(parent),
@@ -20,14 +21,17 @@ TelegraphWindow::~TelegraphWindow()
 
 void TelegraphWindow::addContactWidget(QString name, bool added)
 {
+    qDebug()<<"add " <<name;
     QListWidgetItem *newItem = new QListWidgetItem;
     ContactWidget *contact = new ContactWidget(name);
     contact->enableAddPB(added);
+    qDebug()<<"enabled " <<name;
     connect(contact, SIGNAL(add(QString)), this, SLOT(addContact(QString)));
     ui->contactsLW->addItem(newItem);
     newItem->setSizeHint(contact->sizeHint());
     //newItem->setBackground(QColor(19, 231, 195));
     ui->contactsLW->setItemWidget(newItem, contact);
+    qDebug()<<"added " <<name;
 }
 
 void TelegraphWindow::on_profilePB_clicked()
@@ -61,6 +65,7 @@ void TelegraphWindow::resetContactList()
 {
     ui->contactsLW->clear();
     vector<QString> contacts = user->getContacts();
+    qDebug()<<"contacts " <<contacts.size();
     for (unsigned int i(0); i < contacts.size(); ++i)
         addContactWidget(contacts.at(i), false);
 }

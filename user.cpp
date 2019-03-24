@@ -30,12 +30,12 @@ void User::setPassword(const QString &value)
     password = value;
 }
 
-vector<QString> User::getContacts() const
+vector<Contact> User::getContacts() const
 {
     return contacts;
 }
 
-void User::setContacts(const vector<QString> &value)
+void User::setContacts(const vector<Contact> &value)
 {
     contacts = value;
 }

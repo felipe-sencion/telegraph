@@ -41,6 +41,7 @@ private slots:
     void newUser(QString name, QString password, QString phone);
     void search(int uIndex, QString pattern);
     void addContact(int uIndex);
+    void addMessage(int uIndex, int cIndex);
 };
 
 #endif // TELEGRAPH_H

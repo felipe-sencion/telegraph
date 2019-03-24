@@ -3,6 +3,7 @@
 #include <iostream>
 #include <QString>
 #include <vector>
+#include "contact.h"
 
 using namespace std;
 
@@ -12,7 +13,7 @@ private:
     QString userName;
     QString phone;
     QString password;
-    vector<QString> contacts;
+    vector<Contact> contacts;
 
 public:
     User(QString name, QString ph, QString pass);
@@ -22,8 +23,8 @@ public:
     void setPhone(const QString &value);
     QString getPassword() const;
     void setPassword(const QString &value);
-    vector<QString> getContacts() const;
-    void setContacts(const vector<QString> &value);
+    vector<Contact> getContacts() const;
+    void setContacts(const vector<Contact> &value);
 };
 
 #endif // USER_H

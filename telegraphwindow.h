@@ -28,16 +28,25 @@ private slots:
 
     void addContact(QString name);
 
+    void on_contactsLW_itemSelectionChanged();
+
+    void on_sendPB_clicked();
+
+    void on_messagePTE_textChanged();
+
 private:
     Ui::TelegraphWindow *ui;
     User *user;
     int userIndex;
 
     void resetContactList();
+    void loadMessages();
 signals:
     void searching(int uIdx, QString pattern);
 
     void updateContacts(int uIdx);
+
+    void updateMessages(int uIdx, int cIdx);
 };
 
 #endif // TELEGRAPHWINDOW_H

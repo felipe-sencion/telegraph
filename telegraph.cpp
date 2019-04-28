@@ -77,15 +77,15 @@ void Telegraph::loadDB()
     db.close();
 }
 
-bool Telegraph::findContact(int uIndex, QString name)
+int Telegraph::findContact(int uIndex, QString name)
 {
     vector<Contact> contacts = users.at((uIndex)).getContacts();
     for (int i(0); i < contacts.size(); ++i)
     {
         if (contacts.at(i).getName() == name)
-            return true;
+            return i;
     }
-    return false;
+    return -1;
 }
 
 /*void Telegraph::populateContacts()
@@ -124,6 +124,7 @@ void Telegraph::validate(QString name, QString password)
             connect(telegraphWindow, SIGNAL(searching(int, QString)), this, SLOT(search(int, QString)));
             connect(telegraphWindow, SIGNAL(updateContacts(int)), this, SLOT(addContact(int)));
             connect(telegraphWindow, SIGNAL(updateMessages(int,int)), this, SLOT(addMessage(int,int)));
+            connect(telegraphWindow, SIGNAL(getContactMessages(int,QString)), this, SLOT(findContactMessages(int,QString)));
             telegraphWindow->show();
             //populateContacts();
             break;
@@ -171,7 +172,7 @@ void Telegraph::search(int uIndex, QString pattern)
     for (unsigned int i(0); i < users.size(); ++i)
         if (users.at(i).getUserName().contains(pattern, Qt::CaseInsensitive))
         {
-            if (findContact(uIndex, users.at(i).getUserName()))
+            if (findContact(uIndex, users.at(i).getUserName()) >= 0)
                 telegraphWindow->addContactWidget(users[i].getUserName(), false);
             else
                 telegraphWindow->addContactWidget(users[i].getUserName(), true);
@@ -210,4 +211,20 @@ void Telegraph::addMessage(int uIndex, int cIndex)
     contactsArray[cIndex] = contact;
     obj["contacts"] = contactsArray;
     jsonArray[uIndex] = obj;
+}
+
+void Telegraph::findContactMessages(int uIndex, QString contact)
+{
+    qDebug()<<"Buscar de: " <<contact;
+    int idx;
+    idx = findUser(contact);
+    int contactIndex;
+    contactIndex = findContact(idx, users.at(uIndex).getUserName());
+    vector<Message> messages;
+    if (contactIndex >= 0)
+        messages = users.at(idx).getContacts().at(contactIndex).getMessages();
+    telegraphWindow->displayConversation(messages);
+    //for (Message m : messages)
+        //qDebug()<<m.getText() <<" " <<m.getDateTime().toString("dd/MM/yyyy hh:mm:ss");
+    //return uIndex;
 }

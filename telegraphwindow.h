@@ -18,6 +18,7 @@ public:
     ~TelegraphWindow();
 
     void addContactWidget(QString name, bool added);
+    void displayConversation(vector<Message> contactMessages);
 
 private slots:
     void on_profilePB_clicked();
@@ -34,10 +35,14 @@ private slots:
 
     void on_messagePTE_textChanged();
 
+    void on_searchMessageLE_textChanged(const QString &arg1);
+
 private:
     Ui::TelegraphWindow *ui;
     User *user;
     int userIndex;
+    vector<Message> cMessages;
+    vector<Message> sMessages;
 
     void resetContactList();
     void loadMessages();
@@ -47,6 +52,8 @@ signals:
     void updateContacts(int uIdx);
 
     void updateMessages(int uIdx, int cIdx);
+
+    void getContactMessages(int uIdx, QString contactName);
 };
 
 #endif // TELEGRAPHWINDOW_H

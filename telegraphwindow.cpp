@@ -2,6 +2,7 @@
 #include "ui_telegraphwindow.h"
 #include <QDebug>
 #include "messagewidget.h"
+#include <algorithm>
 
 TelegraphWindow::TelegraphWindow(User *u, int uIndex, QWidget *parent) :
     QMainWindow(parent),
@@ -13,9 +14,6 @@ TelegraphWindow::TelegraphWindow(User *u, int uIndex, QWidget *parent) :
     ui->userLabel->setText("Username: " + user->getUserName());
     ui->phoneLabel->setText("Phone: " + user->getPhone());
     resetContactList();
-
-    //ui->messagesLW->setStyleSheet("QListWidget::item{border: 1px solid #990033; border-radius: 20px;}");
-    //ui->messagesTW->setStyleSheet("QTableWidget::item{border: 1px solid #990033; border-radius: 20px;}");
 }
 
 TelegraphWindow::~TelegraphWindow()
@@ -31,33 +29,68 @@ void TelegraphWindow::addContactWidget(QString name, bool added)
     connect(contact, SIGNAL(add(QString)), this, SLOT(addContact(QString)));
     ui->contactsLW->addItem(newItem);
     newItem->setSizeHint(contact->sizeHint());
-    //newItem->setBackground(QColor(19, 231, 195));
     ui->contactsLW->setItemWidget(newItem, contact);
+}
 
-    /*QListWidgetItem *newI = new QListWidgetItem;
-    MessageWidget *message= new MessageWidget();
-    ui->messagesLW->addItem(newI);
-    newI->setSizeHint(message->sizeHint());
-    //newI->setBackground(QColor(19, 231, 195));
-    ui->messagesLW->setItemWidget(newI, message);
-    newI->setTextAlignment(Qt::AlignRight);*/
+void TelegraphWindow::displayConversation(vector<Message> contactMessages)
+{
+    cMessages.clear();
+    sMessages.clear();
+    sMessages = user->getContacts()[ui->contactsLW->currentRow()].getMessages();
+    cMessages = contactMessages;
+    int i = 0;
+    int j = 0;
+    while (i < sMessages.size() && j < cMessages.size())
+    {
+        if (sMessages.at(i) < cMessages.at(j))
+        {
+            MessageWidget *messageT= new MessageWidget(sMessages.at(i).getText(), sMessages.at(i).getDateTime().toString("dd MM yyyy hh:mm:ss"));
 
+            ui->messagesTW->setRowCount(ui->messagesTW->rowCount()+1);
+            ui->messagesTW->setRowHeight(ui->messagesTW->rowCount()-1, messageT->height());
+            ui->messagesTW->setColumnWidth(1, messageT->width());
+            //messageT->setStyleSheet("background-color:(19, 231, 195, 255);");
+            ui->messagesTW->setCellWidget(ui->messagesTW->rowCount()-1, 1, messageT);
+            ++i;
+        }
+        else
+        {
+            MessageWidget *messageT= new MessageWidget(cMessages.at(j).getText(), cMessages.at(j).getDateTime().toString("dd MM yyyy hh:mm:ss"));
 
+            ui->messagesTW->setRowCount(ui->messagesTW->rowCount()+1);
+            ui->messagesTW->setRowHeight(ui->messagesTW->rowCount()-1, messageT->height());
+            ui->messagesTW->setColumnWidth(1, messageT->width());
+            messageT->setStyleSheet("background-color: rgb(198, 90, 238);");
+            ui->messagesTW->setCellWidget(ui->messagesTW->rowCount()-1, 0, messageT);
+            ++j;
+        }
+    }
+    if (i == sMessages.size())
+    {
+        for (j; j < cMessages.size(); ++j)
+        {
+            MessageWidget *messageT= new MessageWidget(cMessages.at(j).getText(), cMessages.at(j).getDateTime().toString("dd MM yyyy hh:mm:ss"));
 
-    /*QTableWidgetItem *newT = new QTableWidgetItem;
-    MessageWidget *messageT= new MessageWidget();
-    newT->setSizeHint(messageT->sizeHint());
-    ui->messagesTW->setRowHeight(0, messageT->height());
-    ui->messagesTW->setColumnWidth(1, messageT->width());
-    ui->messagesTW->setRowCount(ui->messagesTW->rowCount()+1);
-    ui->messagesTW->setCellWidget(ui->messagesTW->rowCount()-1, 1, messageT);*/
-    //ui->messagesTW->setStyleSheet("QTableWidget::item{border: 1px solid #990033; border-radius: 20px;}");
-    //ui->messagesTW->cellWidget(0, 1)->setStyleSheet("QTableWidget::item{border: 1px solid #990033; border-radius: 20px;}");
-    //ui->messagesTW->setItem(ui->messagesTW->rowCount(), 1, newT);
-    //newI->setBackground(QColor(19, 231, 195));
-    //ui->messagesTW->setItemWidget(newI, message);
+            ui->messagesTW->setRowCount(ui->messagesTW->rowCount()+1);
+            ui->messagesTW->setRowHeight(ui->messagesTW->rowCount()-1, messageT->height());
+            ui->messagesTW->setColumnWidth(1, messageT->width());
+            messageT->setStyleSheet("background-color: rgb(198, 90, 238);");
+            ui->messagesTW->setCellWidget(ui->messagesTW->rowCount()-1, 0, messageT);
+        }
+    }
+    else
+    {
+        for (i; i < sMessages.size(); ++i)
+        {
+            MessageWidget *messageT= new MessageWidget(sMessages.at(i).getText(), sMessages.at(i).getDateTime().toString("dd MM yyyy hh:mm:ss"));
 
-    //newI->setTextAlignment(Qt::AlignRight);
+            ui->messagesTW->setRowCount(ui->messagesTW->rowCount()+1);
+            ui->messagesTW->setRowHeight(ui->messagesTW->rowCount()-1, messageT->height());
+            ui->messagesTW->setColumnWidth(1, messageT->width());
+            //messageT->setStyleSheet("background-color:(19, 231, 195, 255);");
+            ui->messagesTW->setCellWidget(ui->messagesTW->rowCount()-1, 1, messageT);
+        }
+    }
 }
 
 void TelegraphWindow::on_profilePB_clicked()
@@ -125,7 +158,8 @@ void TelegraphWindow::on_contactsLW_itemSelectionChanged()
         ui->messagesSW->setCurrentIndex(1);
         ui->messagesTW->clear();
         ui->messagesTW->setRowCount(0);
-        loadMessages();
+        emit getContactMessages(userIndex, user->getContacts()[ui->contactsLW->currentRow()].getName());
+        //loadMessages();
     }
 }
 
@@ -159,7 +193,6 @@ void TelegraphWindow::on_sendPB_clicked()
     //messageT->setStyleSheet("background-color:(19, 231, 195, 255);");
     ui->messagesTW->setCellWidget(ui->messagesTW->rowCount()-1, 1, messageT);
     ui->messagePTE->clear();
-
 }
 
 void TelegraphWindow::on_messagePTE_textChanged()
@@ -168,4 +201,78 @@ void TelegraphWindow::on_messagePTE_textChanged()
         ui->sendPB->setEnabled(true);
     else
         ui->sendPB->setEnabled(false);
+}
+
+void TelegraphWindow::on_searchMessageLE_textChanged(const QString &arg1)
+{
+    ui->messagesTW->clear();
+    ui->messagesTW->setRowCount(0);
+    if (arg1.size() == 0)
+    {
+        displayConversation(cMessages);
+    }
+    else
+    {
+        int i = 0;
+        int j = 0;
+        while (i < sMessages.size() && j < cMessages.size())
+        {
+            if (sMessages.at(i) < cMessages.at(j))
+            {
+                if (sMessages.at(i).getText().contains(arg1, Qt::CaseInsensitive))
+                {
+                    MessageWidget *messageT= new MessageWidget(sMessages.at(i).getText(), sMessages.at(i).getDateTime().toString("dd MM yyyy hh:mm:ss"));
+                    ui->messagesTW->setRowCount(ui->messagesTW->rowCount()+1);
+                    ui->messagesTW->setRowHeight(ui->messagesTW->rowCount()-1, messageT->height());
+                    ui->messagesTW->setColumnWidth(1, messageT->width());
+                    //messageT->setStyleSheet("background-color:(19, 231, 195, 255);");
+                    ui->messagesTW->setCellWidget(ui->messagesTW->rowCount()-1, 1, messageT);
+                }
+                ++i;
+            }
+            else
+            {
+                if (cMessages.at(j).getText().contains(arg1, Qt::CaseInsensitive))
+                {
+                    MessageWidget *messageT= new MessageWidget(cMessages.at(j).getText(), cMessages.at(j).getDateTime().toString("dd MM yyyy hh:mm:ss"));
+                    ui->messagesTW->setRowCount(ui->messagesTW->rowCount()+1);
+                    ui->messagesTW->setRowHeight(ui->messagesTW->rowCount()-1, messageT->height());
+                    ui->messagesTW->setColumnWidth(1, messageT->width());
+                    messageT->setStyleSheet("background-color: rgb(198, 90, 238);");
+                    ui->messagesTW->setCellWidget(ui->messagesTW->rowCount()-1, 0, messageT);
+                }
+                ++j;
+            }
+        }
+        if (i == sMessages.size())
+        {
+            for (j; j < cMessages.size(); ++j)
+            {
+                if (cMessages.at(j).getText().contains(arg1, Qt::CaseInsensitive))
+                {
+                    MessageWidget *messageT= new MessageWidget(cMessages.at(j).getText(), cMessages.at(j).getDateTime().toString("dd MM yyyy hh:mm:ss"));
+                    ui->messagesTW->setRowCount(ui->messagesTW->rowCount()+1);
+                    ui->messagesTW->setRowHeight(ui->messagesTW->rowCount()-1, messageT->height());
+                    ui->messagesTW->setColumnWidth(1, messageT->width());
+                    messageT->setStyleSheet("background-color: rgb(198, 90, 238);");
+                    ui->messagesTW->setCellWidget(ui->messagesTW->rowCount()-1, 0, messageT);
+                }
+            }
+        }
+        else
+        {
+            for (i; i < sMessages.size(); ++i)
+            {
+                if (sMessages.at(i).getText().contains(arg1, Qt::CaseInsensitive))
+                {
+                    MessageWidget *messageT= new MessageWidget(sMessages.at(i).getText(), sMessages.at(i).getDateTime().toString("dd MM yyyy hh:mm:ss"));
+                    ui->messagesTW->setRowCount(ui->messagesTW->rowCount()+1);
+                    ui->messagesTW->setRowHeight(ui->messagesTW->rowCount()-1, messageT->height());
+                    ui->messagesTW->setColumnWidth(1, messageT->width());
+                    //messageT->setStyleSheet("background-color:(19, 231, 195, 255);");
+                    ui->messagesTW->setCellWidget(ui->messagesTW->rowCount()-1, 1, messageT);
+                }
+            }
+        }
+    }
 }

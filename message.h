@@ -17,6 +17,10 @@ public:
     void setText(const QString &value);
     QDateTime getDateTime() const;
     void setDateTime(const QDateTime &value);
+    bool operator <(const Message &obj) const;
+    bool operator ==(const Message &obj) const;
+    bool operator <=(const Message &obj) const;
+    bool operator >(const Message &obj) const;
 };
 
 #endif // MESSAGE_H

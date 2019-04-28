@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
+    <width>851</width>
     <height>600</height>
    </rect>
   </property>
@@ -14,8 +14,8 @@
    <string>Telegraph</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <layout class="QHBoxLayout" name="horizontalLayout">
-    <item>
+   <layout class="QGridLayout" name="gridLayout_4">
+    <item row="0" column="0">
      <widget class="QFrame" name="contactsFrame">
       <property name="maximumSize">
        <size>
@@ -71,6 +71,9 @@
              <property name="selectionRectVisible">
               <bool>false</bool>
              </property>
+             <property name="sortingEnabled">
+              <bool>false</bool>
+             </property>
             </widget>
            </item>
           </layout>
@@ -121,7 +124,7 @@
       </layout>
      </widget>
     </item>
-    <item>
+    <item row="0" column="1">
      <widget class="QFrame" name="messagesFrame">
       <property name="frameShape">
        <enum>QFrame::StyledPanel</enum>
@@ -129,8 +132,8 @@
       <property name="frameShadow">
        <enum>QFrame::Raised</enum>
       </property>
-      <layout class="QVBoxLayout" name="verticalLayout_2">
-       <item>
+      <layout class="QGridLayout" name="gridLayout_5">
+       <item row="0" column="0">
         <widget class="QStackedWidget" name="messagesSW">
          <widget class="QWidget" name="emptyPage">
           <layout class="QGridLayout" name="gridLayout_3">
@@ -182,11 +185,27 @@
              <attribute name="horizontalHeaderVisible">
               <bool>false</bool>
              </attribute>
+             <attribute name="horizontalHeaderDefaultSectionSize">
+              <number>150</number>
+             </attribute>
+             <attribute name="horizontalHeaderMinimumSectionSize">
+              <number>150</number>
+             </attribute>
+             <attribute name="horizontalHeaderStretchLastSection">
+              <bool>true</bool>
+             </attribute>
              <attribute name="verticalHeaderVisible">
               <bool>false</bool>
              </attribute>
              <column/>
              <column/>
+            </widget>
+           </item>
+           <item row="0" column="1" colspan="2">
+            <widget class="QLineEdit" name="searchMessageLE">
+             <property name="placeholderText">
+              <string>Search</string>
+             </property>
             </widget>
            </item>
           </layout>

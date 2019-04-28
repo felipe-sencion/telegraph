@@ -24,7 +24,7 @@ private:
     size_t findUser(QString name);
     void saveDB();
     void loadDB();
-    bool findContact(int uIndex, QString name);
+    int findContact(int uIndex, QString name);
     //void populateContacts();
 
 public:
@@ -42,6 +42,7 @@ private slots:
     void search(int uIndex, QString pattern);
     void addContact(int uIndex);
     void addMessage(int uIndex, int cIndex);
+    void findContactMessages(int uIndex, QString contact);
 };
 
 #endif // TELEGRAPH_H

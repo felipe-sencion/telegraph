@@ -15,6 +15,9 @@ public:
     void setName(const QString &value);
     vector<Message> getMessages() const;
     void setMessages(const vector<Message> &value);
+
+    bool operator <(const Contact &obj) const;
+    bool operator ==(const Contact &obj) const;
 };
 
 #endif // CONTACT_H

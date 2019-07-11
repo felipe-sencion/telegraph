@@ -47,16 +47,34 @@ void Telegraph::loadDB()
         jsonArray = jsonObject["users"].toArray();
         for (int i(0); i < jsonArray.size(); ++i)
         {
+            bool flag = false;
             QJsonObject obj = jsonArray[i].toObject();
             User u(obj["userName"].toString(), obj["phone"].toString(), obj["password"].toString());
             QJsonArray contactsArray = obj["contacts"].toArray();
             vector<Contact> contacts;
             for(int i(0); i < contactsArray.size(); ++i)
             {
+                flag = false;
                 Contact contact;
                 QString name = contactsArray[i].toObject()["name"].toString();
                 QJsonArray messagesArray = contactsArray[i].toObject()["messages"].toArray();
                 vector<Message> ms;
+                edge[name] = messagesArray.size();
+
+                if (graph.contains(name))
+                {
+                    if (graph[name].contains(u.getUserName()))
+                    {
+                        flag = true;
+                        int gValue = graph[name][u.getUserName()];
+                        int eValue = edge[name];
+                        graph[name][u.getUserName()] = gValue + eValue;
+                        graph[u.getUserName()][name] = gValue + eValue;
+                        edge.clear();
+                    }
+                }
+
+
                 for (int j(0); j < messagesArray.size(); ++j)
                 {
                     Message m;
@@ -68,12 +86,27 @@ void Telegraph::loadDB()
                 contact.setName(name);
                 contact.setMessages(ms);
                 contacts.push_back(contact);
+                if (!flag && contactsArray.size() > 0)
+                {
+                    graph[u.getUserName()] = edge;
+                }
             }
+            edge.clear();
             u.setContacts(contacts);
 
             users.push_back(u);
         }
     }
+    QHash<QString, QHash<QString, int> >::iterator gIt;
+    for (gIt = graph.begin(); gIt != graph.end(); ++gIt)
+    {
+        QHash<QString, int>::iterator eIt;
+        for (eIt = gIt.value().begin(); eIt != gIt.value().end(); ++eIt)
+        {
+            qDebug()<<gIt.key() <<"," <<eIt.key() <<"=" <<eIt.value();
+        }
+    }
+
     db.close();
 }
 
@@ -88,11 +121,46 @@ int Telegraph::findContact(int uIndex, QString name)
     return -1;
 }
 
-/*void Telegraph::populateContacts()
+void Telegraph::prim()
 {
-    for (unsigned int i(0); i < users.size(); ++i)
-        telegraphWindow->addContactWidget(users[i].getUserName());
-}*/
+    qDebug()<<"Prim";
+    std::priority_queue<Edge, std::vector<Edge>> pq;
+    QStringList v_s;
+    QString current;
+
+    QHash<QString, QHash<QString, int> >::iterator gIt = graph.begin();
+    current = gIt.key();
+    ++gIt;
+    for (; gIt != graph.end(); ++gIt)
+    {
+        v_s.append(gIt.key());
+    }
+    while (!v_s.empty())
+    {
+        QHash<QString, int> edges;
+        edges = graph[current];
+        QHash<QString, int>::iterator eIt = edges.begin();
+        for (; eIt != edges.end(); ++eIt)
+        {
+            if (v_s.contains(eIt.key()))
+            {
+                Edge e(current, eIt.key(), eIt.value());
+                pq.push(e);
+            }
+        }
+        Edge node = pq.top();
+        pq.pop();
+        while (!v_s.contains(node.getDestiny()))
+        {
+            node = pq.top();
+            pq.pop();
+        }
+        v_s.removeOne(node.getDestiny());
+        qDebug() <<node.getSource() <<"," <<node.getDestiny() <<": " <<node.getWeight();
+        current = node.getDestiny();
+    }
+
+}
 
 Telegraph::Telegraph(QObject *parent) : QObject(parent)
 {
@@ -101,6 +169,7 @@ Telegraph::Telegraph(QObject *parent) : QObject(parent)
     connect(loginWindow, SIGNAL(create(QString,QString,QString)), this, SLOT(newUser(QString,QString,QString)));
     db.setFileName("telegraph.json");
     loadDB();
+    prim();
 }
 
 Telegraph::~Telegraph()
@@ -224,7 +293,4 @@ void Telegraph::findContactMessages(int uIndex, QString contact)
     if (contactIndex >= 0)
         messages = users.at(idx).getContacts().at(contactIndex).getMessages();
     telegraphWindow->displayConversation(messages);
-    //for (Message m : messages)
-        //qDebug()<<m.getText() <<" " <<m.getDateTime().toString("dd/MM/yyyy hh:mm:ss");
-    //return uIndex;
 }

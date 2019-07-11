@@ -9,6 +9,9 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonArray>
+#include <QHash>
+#include "edge.h"
+#include <queue>
 
 class Telegraph : public QObject
 {
@@ -20,12 +23,14 @@ private:
     TelegraphWindow *telegraphWindow;
     QFile db;
     QJsonArray jsonArray;
+    QHash<QString, QHash<QString, int> > graph;
+    QHash<QString, int> edge;
 
     size_t findUser(QString name);
     void saveDB();
     void loadDB();
     int findContact(int uIndex, QString name);
-    //void populateContacts();
+    void prim();
 
 public:
     explicit Telegraph(QObject *parent = 0);

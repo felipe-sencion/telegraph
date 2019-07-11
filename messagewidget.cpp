@@ -20,8 +20,6 @@ MessageWidget::MessageWidget(QString text, QString date, QWidget *parent) :
     ui->messagePTE->setPlainText(text);
     ui->DTLabel->setText(date);
 
-    //widget->show();
-
 }
 
 MessageWidget::~MessageWidget()

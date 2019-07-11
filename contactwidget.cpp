@@ -24,20 +24,8 @@ ContactWidget::ContactWidget(QString name, QWidget *parent) :
     ui->thumbnailLabel->setText(thumbnail);
     ui->thumbnailLabel->setFont(font);
     ui->thumbnailLabel->setGraphicsEffect(effect);
-    //ui->nameLabel->setFont(font);
-    //ui->nameLabel->setGraphicsEffect(effect);
 
     setToolTip(name);
-
-
-    /*const int radius = 10;
-    QPainterPath path;
-    path.addRoundedRect(rect(), radius, radius);
-    QRegion mask = QRegion(path.toFillPolygon().toPolygon());
-    setMask(mask);*/
-    //widget->setMask(mask);
-
-    //widget->show();
 }
 
 ContactWidget::~ContactWidget()

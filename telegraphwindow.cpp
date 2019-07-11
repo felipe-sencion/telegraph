@@ -49,7 +49,6 @@ void TelegraphWindow::displayConversation(vector<Message> contactMessages)
             ui->messagesTW->setRowCount(ui->messagesTW->rowCount()+1);
             ui->messagesTW->setRowHeight(ui->messagesTW->rowCount()-1, messageT->height());
             ui->messagesTW->setColumnWidth(1, messageT->width());
-            //messageT->setStyleSheet("background-color:(19, 231, 195, 255);");
             ui->messagesTW->setCellWidget(ui->messagesTW->rowCount()-1, 1, messageT);
             ++i;
         }
@@ -87,7 +86,6 @@ void TelegraphWindow::displayConversation(vector<Message> contactMessages)
             ui->messagesTW->setRowCount(ui->messagesTW->rowCount()+1);
             ui->messagesTW->setRowHeight(ui->messagesTW->rowCount()-1, messageT->height());
             ui->messagesTW->setColumnWidth(1, messageT->width());
-            //messageT->setStyleSheet("background-color:(19, 231, 195, 255);");
             ui->messagesTW->setCellWidget(ui->messagesTW->rowCount()-1, 1, messageT);
         }
     }
@@ -146,7 +144,6 @@ void TelegraphWindow::loadMessages()
         ui->messagesTW->setRowCount(ui->messagesTW->rowCount()+1);
         ui->messagesTW->setRowHeight(ui->messagesTW->rowCount()-1, messageT->height());
         ui->messagesTW->setColumnWidth(1, messageT->width());
-        //messageT->setStyleSheet("background-color:(19, 231, 195, 255);");
         ui->messagesTW->setCellWidget(ui->messagesTW->rowCount()-1, 1, messageT);
     }
 }
@@ -159,7 +156,6 @@ void TelegraphWindow::on_contactsLW_itemSelectionChanged()
         ui->messagesTW->clear();
         ui->messagesTW->setRowCount(0);
         emit getContactMessages(userIndex, user->getContacts()[ui->contactsLW->currentRow()].getName());
-        //loadMessages();
     }
 }
 
@@ -190,7 +186,6 @@ void TelegraphWindow::on_sendPB_clicked()
     ui->messagesTW->setRowCount(ui->messagesTW->rowCount()+1);
     ui->messagesTW->setRowHeight(ui->messagesTW->rowCount()-1, messageT->height());
     ui->messagesTW->setColumnWidth(1, messageT->width());
-    //messageT->setStyleSheet("background-color:(19, 231, 195, 255);");
     ui->messagesTW->setCellWidget(ui->messagesTW->rowCount()-1, 1, messageT);
     ui->messagePTE->clear();
 }
@@ -225,7 +220,6 @@ void TelegraphWindow::on_searchMessageLE_textChanged(const QString &arg1)
                     ui->messagesTW->setRowCount(ui->messagesTW->rowCount()+1);
                     ui->messagesTW->setRowHeight(ui->messagesTW->rowCount()-1, messageT->height());
                     ui->messagesTW->setColumnWidth(1, messageT->width());
-                    //messageT->setStyleSheet("background-color:(19, 231, 195, 255);");
                     ui->messagesTW->setCellWidget(ui->messagesTW->rowCount()-1, 1, messageT);
                 }
                 ++i;
@@ -269,7 +263,6 @@ void TelegraphWindow::on_searchMessageLE_textChanged(const QString &arg1)
                     ui->messagesTW->setRowCount(ui->messagesTW->rowCount()+1);
                     ui->messagesTW->setRowHeight(ui->messagesTW->rowCount()-1, messageT->height());
                     ui->messagesTW->setColumnWidth(1, messageT->width());
-                    //messageT->setStyleSheet("background-color:(19, 231, 195, 255);");
                     ui->messagesTW->setCellWidget(ui->messagesTW->rowCount()-1, 1, messageT);
                 }
             }
